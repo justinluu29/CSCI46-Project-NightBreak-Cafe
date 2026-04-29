@@ -14,7 +14,6 @@ class Node:
         self.data = data
         self.next = None
 
-
 class LinkedList:
     def __init__(self):
         self.head = None
@@ -43,11 +42,6 @@ class Queue:
             return None
         return self.items.pop(0)
 
-    def peek(self):
-        if len(self.items) == 0:
-            return None
-        return self.items[0]
-
 
 # Binary Search Tree
 class BSTNode:
@@ -57,7 +51,9 @@ class BSTNode:
         self.data = data
 
     def insert(self, data):
-        if data < self.data:
+        if self.data == data:
+            raise "Data already exist within tree"
+        elif self.data > data:
             if self.left:
                 self.left.insert(data)
             else:
@@ -67,6 +63,12 @@ class BSTNode:
                 self.right.insert(data)
             else:
                 self.right = BSTNode(data)
+
+    def inorder(self, currentNode):
+        if currentNode:
+            self.inorder(currentNode.left)
+            print(currentNode.data)
+            self.inorder(currentNode.right)
 
 
 class BST:
@@ -79,44 +81,35 @@ class BST:
         else:
             self.root = BSTNode(data)
 
-
-def inorder(node, results):
-    if node is not None:
-        inorder(node.left, results)
-        results.append(node.data)
-        inorder(node.right, results)
+    def inorder(self):
+        if self.root:
+            self.root.inorder(self.root)
 
 
 # Merge sort
 def merge_sort(arr):
     if len(arr) > 1:
-        mid = len(arr) // 2
-        left = arr[:mid]
-        right = arr[mid:]
-
-        merge_sort(left)
-        merge_sort(right)
-
-        i = 0
-        j = 0
-        k = 0
-        while i < len(left) and j < len(right):
-            if left[i] < right[j]:
-                arr[k] = left[i]
+        left_arr = arr[:len(arr) // 2]
+        right_arr = arr[len(arr) // 2:]
+        merge_sort(left_arr)
+        merge_sort(right_arr)
+        i = j = k = 0
+        while i < len(left_arr) and j < len(right_arr):
+            if left_arr[i] < right_arr[j]:
+                arr[k] = left_arr[i]
                 i += 1
             else:
-                arr[k] = right[j]
+                arr[k] = right_arr[j]
                 j += 1
             k += 1
-        while i < len(left):
-            arr[k] = left[i]
+        while i < len(left_arr):
+            arr[k] = left_arr[i]
             i += 1
             k += 1
-        while j < len(right):
-            arr[k] = right[j]
+        while j < len(right_arr):
+            arr[k] = right_arr[j]
             j += 1
             k += 1
-    return arr
 
 
 # Binary search
@@ -141,6 +134,15 @@ def money(price):
     if cents < 10:
         return "$" + str(whole) + ".0" + str(cents)
     return "$" + str(whole) + "." + str(cents)
+
+
+# Helper to collect BST items into a sorted list (uses the same inorder logic from lecture,
+# just appends to a list instead of printing so we can format the menu nicely)
+def collect_inorder(node, results):
+    if node:
+        collect_inorder(node.left, results)
+        results.append(node.data)
+        collect_inorder(node.right, results)
 
 
 # Cafe state
@@ -221,7 +223,7 @@ def show_menu():
     line()
     print("Nightbreak Cafe Menu")
     sorted_items = []
-    inorder(menu_tree.root, sorted_items)
+    collect_inorder(menu_tree.root, sorted_items)
     for item in sorted_items:
         price = item[0]
         item_id = item[1]
