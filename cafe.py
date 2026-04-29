@@ -124,7 +124,7 @@ def binary_search(arr, query):
             low = mid + 1
         else:
             high = mid - 1
-    return -1
+    return "Order not found"
 
 
 # Money helper
